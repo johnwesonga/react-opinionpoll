@@ -8,25 +8,24 @@ const PollOption = ({options,selected, onChange}) => {
         <label key={index}>
         <input type="radio" 
                 name="vote" 
-                value={choice.value} 
                 key={index}
-                checked={selected === choice.value}
-                onChange={onChange}/>
-                {choice.text}
+                onChange={(e)=>onChange(e,index)}/>
+                {choice.name} <br/>
         </label>
       ))}  
     </div>
    );
 };
 
-const VoteCount = ({totalVotes, choiceOneVotes, choiceTwoVotes}) =>{
+const VoteCount = ({totalVotes, options}) =>{
   return(
       <div className="VoteCount">
           <h2>Total Votes {totalVotes}</h2>
           <ul>
-            <li>Yes: {choiceOneVotes}</li>
-            <li>No: {choiceTwoVotes}</li>
-          </ul>
+          {options.map((element,index)=>(
+            <li key={index}>{element.name}: {element.count}</li>
+          ))}
+        </ul>
       </div>
   );
 }
@@ -36,31 +35,39 @@ const VoteCount = ({totalVotes, choiceOneVotes, choiceTwoVotes}) =>{
 class OpinionPoll extends Component{
   constructor(props) {
     super(props);
-    this.state = {selectedOption: '', 
+    this.state = {selectedOption: 0, 
                   totalVotes: 0,
-                  choiceOneVotes: 0,
-                  choiceTwoVotes: 0}
+                  options: [
+                    {name: "puzzle", count: 0},
+                    {name: "strategy", count: 0},
+                    {name: "adventure", count: 0},
+                    {name: "shooter", count: 0},
+                    {name: "sole-playing", count: 0}
+                  ]
+                  }
   }
 
   handleClick(){
-    console.log('submitted option', this.state.selectedOption);
-    this.setState(prevState => {
-      return {totalVotes: prevState.totalVotes + 1}
-    })
-   if(this.state.selectedOption === "yes"){
-    this.setState(prevState => {
-      return {choiceOneVotes: prevState.choiceOneVotes + 1}
-    })
-   }else{
-    this.setState(prevState => {
-      return {choiceTwoVotes: prevState.choiceTwoVotes + 1}
-    })
-   }
-  }
+    const selectedIndex =   this.state.selectedOption
+    const newOption = [...this.state.options]
 
-  handleOnChange(e){
-    console.log('selected option', e.target.name);
-    this.setState({ selectedOption: e.target.value});
+    if (selectedIndex !== null){
+      console.log('submitted option', selectedIndex);
+      this.setState(prevState => {
+        return {totalVotes: prevState.totalVotes + 1}
+      })
+
+      
+      newOption[selectedIndex].count += 1
+      this.setState({
+         options: newOption,
+       })
+     }
+   }
+
+  handleOnChange(e, index){
+    console.log('selection option', index);
+    this.setState({ selectedOption: index});
   }
 
   render(){
@@ -68,15 +75,15 @@ class OpinionPoll extends Component{
       <div className="poll">
         {this.props.model.question}
         <PollOption 
-          options={this.props.model.choices}
-          onChange={(e) => this.handleOnChange(e)}
+          options={this.state.options}
+          onChange={(e, index) => this.handleOnChange(e, index)}
           selected={this.state.selectedOption}/>
 
-        <button onClick={() => this.handleClick()}>Vote!</button>
+        <button name="Vote" onClick={() => this.handleClick()}>Vote!</button>
         <VoteCount 
           totalVotes={this.state.totalVotes}
-          choiceOneVotes={this.state.choiceOneVotes}
-          choiceTwoVotes={this.state.choiceTwoVotes}/>
+          options={this.state.options}
+          />
       </div>
     );
   }

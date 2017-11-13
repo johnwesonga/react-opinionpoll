@@ -5,11 +5,14 @@ import OpinionPoll from './App';
 
 
 var json = {
-        question: 'Do you support cookies in cakes?',
+        question: 'Which type of video game do you play most often?',
         choices:
         [
-           {text: "Yes", value: "yes"},
-           {text: "No", value: "no"} 
+           {text: "Puzzle", value: "puzzle"},
+           {text: "Strategy", value: "strategy"}, 
+           {text: "Adventure", value: "adventure"},
+           {text: "Shooter", value: "shooter"},
+           {text: "Role-playing", value: "role-playing"}   
         ]
     }
 const root = document.getElementById("root");
